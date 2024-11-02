@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+      "target": "ES6",
+      "lib": ["es6", "dom"],
+      "experimentalDecorators": true,                   
+      "emitDecoratorMetadata": true,
+      "module": "commonjs",
+      "rootDir": "./src",
+      "moduleResolution": "node",
+      "types": ["reflect-metadata"],
+      "sourceMap": true,
+      "strict": true,
+      "preserveConstEnums": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "strictNullChecks": false,
+      "outDir": "./dist"
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules"]
+  }
+  
