@@ -1,59 +1,32 @@
-import { Router } from "express";
-import { Container } from "inversify";
-import { BooksRepository } from "./repositories/BooksRepository"; 
-import { myContainer } from "./container"; 
-// import { Book  } from "../models/Book"; 
+import express from "express";
+import mongoose from "mongoose";
+import { myContainer } from "./container";
+import { router } from "./routes/books";
 
-const router = Router();
+const app = express();
+const port = process.env.PORT || 3000;
+const UrlDB = 'mongodb://mongo:27017/Library';  //  process.env.UrlDB;
 
-router.get('/:id', async (req, res) => {
-    const repo = myContainer.get<BooksRepository>(BooksRepository);
+app.use(express.json());
+app.use('/books', router);
+
+// mongoose.connect(process.env.MONGO_URI || 'mongodb://mongo:27017/Library')
+//     .then( () => {
+//         app.listen(port, () => {
+//             console.log(`The server is running on http://localhost:${port}`);
+//         });
+//     } )
+//     .catch( err => console.error(err) );
+
+async function start(port: string | number, UrlDB: string) {
     try {
-        const book = await repo.getBook(req.params.id);
-        res.json(book);
+        await mongoose.connect(UrlDB);
+        app.listen(port, () => {
+            console.log(`The server is running on http://localhost:${port}`);
+        });
     } catch (e) {
-        res.status(500).json(e);
+        console.error(e);
     }
-});
+}
 
-router.get('/', async (req, res) => {
-    const repo = myContainer.get<BooksRepository>(BooksRepository);
-    try {
-        const books = await repo.getBooks();
-        res.json(books);
-    } catch (e) { 
-        res.status(500).json(e);
-    }
-});
-
-router.post('/', async (req, res) => {
-    const repo = myContainer.get<BooksRepository>(BooksRepository);
-    try {
-        await repo.createBook(req.body);
-        res.status(201).send();
-    } catch (e) {
-        res.status(500).json(e);
-    }
-});
-
-router.put('/:id', async (req, res) => {
-    const repo = myContainer.get<BooksRepository>(BooksRepository);
-    try {
-        const updateBook = await repo.updateBook(req.params.id, req.body);
-        res.json(updateBook);
-    } catch (e) {
-        res.status(500).json(e);
-    }
-});
-
-router.delete('/:id', async (req, res) => {
-    const repo = myContainer.get<BooksRepository>(BooksRepository);
-    try {
-    await repo.deleteBook(req.params.id);
-    res.json(201).send();
-    } catch (e) {
-         res.status(500).json(e);
-    }
-});
-
-export { router };
+start(port, UrlDB);
